@@ -1,0 +1,14 @@
+#!/bin/tcsh
+#
+# wrapper for opendome_raw
+# don't open if sun is up.
+# otherwise , call opendome_raw
+#
+# DLR 2009 Aug 7
+#
+set l = `sunup |& tail -n 1`
+if ($l == 1 ) then
+  echo "ERROR sun is up"
+else
+  opendome_raw
+endif

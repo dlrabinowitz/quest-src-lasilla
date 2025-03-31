@@ -1,0 +1,195 @@
+#
+# NEAT system configuration file
+#
+
+###################################################################
+# SITE configuration parameters, describing the telescope location.
+# Describes the telescope location.
+# Parameters are:
+#
+# 	SITE_NAME  	site name (string)
+# 	SITE_LAT  	site latitude, deg north (float)
+# 	SITE_LON  	site longitude, deg east (float)
+# 	SITE_ELEV  	site elevation, meters (float)
+
+#SITE_NAME  	"JPL"	# site name
+#SITE_LAT  	34.0	# site latitude (deg north)
+#SITE_LON	242.0	# site longitude (deg east)
+#SITE_ELEV	400.0	# site elevation, meters
+
+SITE_NAME       "OSCHIN/PALOMAR"   # site name
+SITE_LAT        33.357435        # site latitude (deg north)
+SITE_LON        243.141100      # site longitude (deg east)
+SITE_ELEV       1726.28         # site elevation, meters
+SITE_DEBUG	1
+
+###################################################################
+# Telescope mount/dome configuration, describing the dome size
+# relative position of mount within dome, and mount rotation/rate offsets.
+#
+# Units don't matter for the dome radius and E/N/U offsets, as long as
+# they all agree.  Dome radius should be measured from dome center
+# to center of dome surface, since the dome doors do have measurable
+# thickness.  Mount offsets are measured from center of dome sphere to
+# telescope center of rotation.  These are used to correctly
+# calculate the dome azimuth for a given telescope pointing,
+# so that the telsceope telescope is looking through the dome aperture!
+# Offsets are measured FROM dome center TO telescope.
+
+# GEODSS/Maui, Tower 1, hand measured 8/95 Steve Groom.
+
+# ***config items below are maui values and are probably irrelevant***
+DOME_RADIUS	126.0	# dome radius (inches)
+MOUNT_OFF_E	0.0	# east offset from center of dome (inches)
+MOUNT_OFF_N	50.0	# north offset from center of dome (inches)
+MOUNT_OFF_U	24.0	# vertical offset from center of dome (inches)
+# except for this one.
+MOUNT_POINT_TIMEOUT 150
+
+# POL/GDEC rotational offsets:
+# Rotational offsets are used to compensate for pol/gdec alignment.
+# These numbers are subtracted from the calculated values
+# before being supplied to the mount, and added from encoder
+# readouts before being used in sky position calculations.
+# 
+# The GEODSS folks update these numbers periodically, so for accuracy
+# NEAT should do the same.
+# The numbers can be taken from the GEODSS "KALMAN" utility output.
+# The KALMAN output includes POL and DEC (gdec) encoder offset values,
+# specified in arcseconds.  The numbers below are specified in degrees,
+# so the KALMAN numbers are divided by 3600 and plugged in here.
+# The best offsets for NEAT may be slightly different because of differences
+# between the GEODSS sensor and the NEAT camera.
+# 
+# These corrections are applied AFTER motion limits are checked,
+# so if they are significant (say, larger than 1 degree), then the
+# mount motion limits should be adjusted accordingly!
+
+# GEODSS Maui, tower 1, offsets from GEODSS "KALMAN" utility, 10/22/95
+# KALMAN output is in arcseconds, but we want degrees.
+# Take the number from KALMAN and divide by 3600.0, preserving the sign.
+
+# ***config items below are maui values and are probably irrelevant***
+#MOUNT_OFF_POL		-0.435000	# -1566 arcseconds, 10/22/95
+#MOUNT_OFF_GDEC		 0.043611	#   157 arcseconds, 10/22/95
+MOUNT_OFF_POL		-0.433888	# -1562 arcseconds, 12/15/95
+MOUNT_OFF_GDEC		 0.046388	#   167 arcseconds, 12/15/95
+
+# GEODSS Maui, tower 1.  Using a calculated "sidereal" rate causes
+# the mount to track too fast.  I ran some tests and found that the
+# long term tracking error was on the order of 5 arcseconds over a
+# 120 second integration.  The offset below compensates for that error.
+# It was calculated by letting the mount track on it's own for a while,
+# and dividing the accumulated error by the track time.
+# No rate offset is given for the GDEC axis since we currently only
+# do sidereal tracks, involving only the POL axis.
+
+# ***config items below are maui values and are probably irrelevant***
+MOUNT_OFF_POL_R		-0.000012	# pol rate tracking error, deg/sec
+
+###################################################################
+# CAMERA configuration parameters
+# Parameters are:
+#
+
+# Observatory/telescope/camera ID
+# Note that "TELESCOPE_ID" *includes* the camera type,
+# i.e. different cameras should have different telescope_id's even if
+# they're both in the same telescope.
+CAM_OBSERVATORY		"OSCHIN - PALOMAR"
+#CAM_TELESCOPE_ID	"GEODSST"	# Tower 1, 1K test camera
+# changed 4/5/96
+CAM_TELESCOPE_ID	"PALOM48"	# Tower 1, 4K camera
+#CAM_TELESCOPE_ID	"GEODSS2"	# Tower 1, 2K camera
+CAM_SHUTTER_BOUNCE	0
+CAM_UTIL_TIMER		0
+CAM_A_RA_OFFSET		0.00124             # in hours
+CAM_A_DEC_OFFSET	-2.3194
+CAM_C_RA_OFFSET		-0.001053     # in hours
+CAM_C_DEC_OFFSET	2.2972
+
+##########
+# Information about the camera CCD size, NEAT 1K "test" camera
+#CAM_SENSOR_TYPE	"CCD"	# 
+#CAM_SENSOR_INFO	"NEATT"	# sensor model, serial, other notes
+#CAM_ROWS		1024	# CCD active area size, row pixels
+#CAM_COLS		1024	# CCD active area size, col pixels
+#CAM_DEADROWS		4	# dead rows each side of active area
+#CAM_DEADCOLS		4	# dead cols each side of active area
+#CAM_ROW_PIX_SIZE	12.0	# row pixel size, microns
+#CAM_COL_PIX_SIZE	12.0	# col pixel size, microns
+#CAM_PLATE_SCALE		0.095	# plate scale, arcsec/micron
+#CAM_GAIN		0.0	# electrons per adu (ccds) 
+#CAM_IMGUNIT		0.0	# image units (adu's etc)
+#CAM_TEMPGAIN		0.0	# CCD temperature sensor gain
+#CAM_TEMPOFF		0.0	# CCD temperature sensor offset
+#CAM_READRATE		35000	# approx camera data readout rate, pixels/second
+
+###########
+## Information about the camera CCD size, NEAT 2K "test" camera
+#CAM_SENSOR_TYPE	"CCD"	# 
+#CAM_SENSOR_INFO	"NEAT2"	# sensor model, serial, other notes
+#CAM_ROWS		2032	# CCD active area size, row pixels
+#CAM_COLS		2032	# CCD active area size, col pixels
+#CAM_DEADROWS		8	# dead rows each side of active area
+#CAM_DEADCOLS		26	# dead cols each side of active area
+#CAM_ROW_PIX_SIZE	15.0	# row pixel size, microns
+#CAM_COL_PIX_SIZE	15.0	# col pixel size, microns
+#CAM_PLATE_SCALE	0.11875	# plate scale, arcsec/micron
+#CAM_GAIN		1.9	# electrons per adu (ccds) 
+#CAM_IMGUNIT		0.0	# image units (adu's etc)
+#CAM_TEMPGAIN		0.2551	# CCD temperature sensor gain
+#CAM_TEMPOFF		2742.4	# CCD temperature sensor offset
+#CAM_READRATE		50000	# approx camera data readout rate, pixels/second
+
+###########
+## Information about the camera CCD size, NEAT 4 camera, GEN 1 
+## Used until Jan 29 , 1997, when new GEN 2 camera installed 
+#CAM_SENSOR_TYPE	"CCD"	# 
+#CAM_SENSOR_INFO	"NEAT4"	# sensor model, serial, other notes
+#CAM_ROWS		4080	# CCD active area size, row pixels
+#CAM_COLS		4080	# CCD active area size, col pixels
+#CAM_DEADROWS		9	# 9 dead rows each side of active area 4/16/96
+#CAM_DEADCOLS		12	# 12 dead cols each side of active area 4/16/96
+#CAM_ROW_PIX_SIZE	15.0	# row pixel size, microns
+#CAM_COL_PIX_SIZE	15.0	# col pixel size, microns
+#CAM_PLATE_SCALE	0.11875	# plate scale, arcsec/micron
+#CAM_GAIN		1.9	# electrons per adu (ccds) 
+#CAM_IMGUNIT		0.0	# image units (adu's etc)
+#CAM_TEMPGAIN		0.2551	# CCD temperature sensor gain
+#CAM_TEMPOFF		2742.4	# CCD temperature sensor offset
+#CAM_READRATE		50000	# approx camera data readout rate, pixels/second
+#
+###########
+## Information about the camera CCD size, NEAT 12 camera, GEN 2 
+CAM_SENSOR_TYPE	"CCD"	# 
+CAM_SENSOR_INFO	"NEAT12GEN2"	# sensor model, serial, other notes
+CAM_ROWS		4080	# CCD active area size, row pixels
+CAM_COLS		12240	# CCD active area size, col pixels
+CAM_DEADROWS		9 	# 9 dead rows each side of active area 4/16/96
+CAM_DEADCOLS		13      # 13 dead cols each side of active area 4/16/96
+CAM_ROW_PIX_SIZE	15.0	# row pixel size, microns
+CAM_COL_PIX_SIZE	15.0	# col pixel size, microns
+CAM_PLATE_SCALE		0.06719	# plate scale, arcsec/micron
+CAM_GAIN		1.9	# electrons per adu (ccds) 
+CAM_IMGUNIT		0.0	# image units (adu's etc)
+CAM_TEMPGAIN		0.2551	# CCD temperature sensor gain
+CAM_TEMPOFF		2742.4	# CCD temperature sensor offset
+CAM_READRATE		1480000	# approx camera data readout rate, pixels/second
+
+# Data format
+CAM_BITPIX		16	# data bits per pixel
+CAM_DNOFFSET		32768	# subtracted from each pix bef wrt to file
+CAM_SATURATION		32767	# maximum data value after offset subtracted
+
+# Image orientation
+CAM_NORTH_ORIENT	"TOP"	# north direction (TOP/BOTTOM/LEFT/RIGHT)
+CAM_EAST_ORIENT		"LEFT"	# east direction (TOP/BOTTOM/LEFT/RIGHT)
+
+# Telescope focal length
+CAM_FOCAL_LEN		3069.8	# focal length, mm (GEODSS)
+
+# Camera interface device name and camera DSP code files to use
+CAM_DEVNAME		"/dev/astro0"
+CAM_TIMING_CODE		"/home/neat/camera/timingcode.lod"
+CAM_UTILITY_CODE	"/home/neat/camera/utilitycode.lod"

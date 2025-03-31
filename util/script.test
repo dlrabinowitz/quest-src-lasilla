@@ -1,0 +1,41 @@
+#
+# test of TCS on 2009 02 05
+echo "test2 of TCS on 2009 02 05"
+set TEST = 0
+set  p =   `cat script.20090204a`
+set n = $#p
+echo $n
+#
+set n1 = 0
+@ n1 = $n / 2
+echo $n1
+echo "$n1 pointings to be tested:"
+set i = 1
+set j = 1
+while ( $i <= $n )
+   @ i1 = $i + 1
+   echo "$j :  RA: $p[$i]   DEC: $p[$i1]"
+   @ i = $i + 2
+   @ j = $j + 1
+end
+echo " "
+set i = 1
+set j = 1
+while ( $i < = $n )
+  @ i1 = $i + 1
+  set ra = $p[$i]
+  set dec = $p[$i1]
+  echo `date` "going to pointing $j : $ra $dec"
+  if ( $TEST == 0 ) then
+  echo "track $ra $dec" | questclient.pl
+  sleep 120
+  endif
+  @ i = $i + 2
+  @ j = $j + 1
+end
+echo "stowing the telescope"
+if ($TEST == 0) then
+echo "stow" | questclient.pl
+endif
+echo "all done"
+
