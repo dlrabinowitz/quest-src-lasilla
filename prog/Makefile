@@ -25,13 +25,13 @@ all: $(QUESTPROGRAMS)
 quest: $(QUESTPROGRAMS)
 
 copy:
-	(cd $(INSTALLDIR); rm -f $(PROGRAMS))
+	(cd $(INSTALLDIR); rm -f $(QUESTPROGRAMS))
 	cp -p $(QUESTPROGRAMS) $(INSTALLDIR)
 
 install: all copy
 
 clean:
-	rm -f  *~ *.o $(PROGRAMS)
+	rm -f  *~ *.o $(QUESTPROGRAMS)
 
 questctl: questctl.o  $(QUESTCAMLIB)
 	$(CCC) $(CCFLAGS) $(LDFLAGS) -o $@ \

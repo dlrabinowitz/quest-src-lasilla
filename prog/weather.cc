@@ -4,7 +4,7 @@
 // $Date: 2009/07/23 20:57:12 $
 //
 
-#include <iostream.h>
+#include <iostream>
 #include <stdlib.h>
 #include <telescope_controller.h>
 #define COM_PORT 1 /* com_port TCS uses to take remote commands */
@@ -12,6 +12,8 @@
 
 void usage(char *);
 EXTERN int tel_drv_debug;
+
+using namespace std;
 
 int main(int argc, char* argv[]) {
     if (argc > 1) {

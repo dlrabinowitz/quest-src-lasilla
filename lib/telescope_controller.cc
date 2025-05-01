@@ -12,7 +12,7 @@
 #include <telescope_controller.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <iostream.h>
+#include <iostream>
 #include <string.h>
 #include <ctype.h>
 #include <unistd.h>
@@ -40,6 +40,7 @@ works if upper limit to focus fixed at -100000 */
 // debug global var
 //int tel_ctlr_debug = 1 ;
 
+using namespace std;
 /**************************************************************************
  * METHOD: telescope_controller::telescope_controller
  *

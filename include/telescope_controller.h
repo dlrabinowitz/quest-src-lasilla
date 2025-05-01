@@ -372,4 +372,9 @@ class telescope_command {
 		int command_type;
 };
 
+#include <string.h>
+#include <unistd.h>
+
+using namespace std;
+
 #endif //INC_TELESCOPE_CONTROLLER_H

@@ -7,13 +7,14 @@
 
 #include "tcs_talk.h"
 #include "telescope_drv.h"
+#include "errno.h"
 
 /* IO permissions when opening the serial port for reading and writing */
 #define READ_OPS O_RDONLY
 #define WRITE_OPS O_WRONLY
 
 /* Baud Rate to serial IO */
-#define BAUD_RATE /*B9600*/B9600
+#define BAUD_RATE /*B9600*/B115200
 
 #define STRING_LENGTH 10240 /* length of read buffer */
 
@@ -22,7 +23,8 @@
 /*#define TIMEOUT_USEC 1000000*/
 #define TIMEOUT_USEC 5000000
 /*#define SERIAL_PORT "/dev/cua1"*/
-#define SERIAL_PORT "/dev/ttyS0"
+/*#define SERIAL_PORT "/dev/ttyS0"*/
+#define SERIAL_PORT "/dev/ttyUSB0"
 /*#define SERIAL_PORT "/dev/cu.usbserial-FTDD9UGB"*/
 #define DONE_REPLY "done"
 #define ERROR_REPLY "error"
@@ -121,6 +123,7 @@ char **argv;
 	while(strlen(string)!=buf_size&&n++<NUM_READ_TRIES){
                 for(i=0;i<buf_size;i++)string[i]=0;
 		read_serial(string);
+		fprintf(stdout,"reply is [%s]\n",string);
 		usleep(100000);
         }
 if(n>1){
@@ -259,6 +262,7 @@ int op;
 
     if((int)tcgetattr(fd,term)!=0){
     	printf("can't get termios structure\n");
+	perror("tcsgetattr error");
     	return(-1);
     }
     
@@ -309,13 +313,24 @@ int op;
 read_serial(string)
 char *string;
 {
-	int n,result,length,l1,l2;
+	int i,n,result,length,l1,l2;
 	char done_reply[3];
 	char *s;
 	fd_set readfds;
 	struct timeval timeout;
 	int done,sync;
 
+        
+#ifdef FAKE_CONTROLLER
+        sprintf(string,"%s","0  155651.21 +505906.5  +00:00:12 15:57:20  10.0   -0.0  5.74 E          HD2000.000 2455146.2 1 -246620  +0.7 17:20:18.9 0                         ");
+
+	n=strlen(string);
+	for (i=n;i<sizeof(TCS_Telemetry);i++){
+	   string[i]="";
+	}
+	strcpy(string+i-1,"\n");
+	n=strlen(string);
+#else
 	/* set  timeout value for polling port for data */
 	
 	timeout.tv_sec=TIMEOUT_SEC;
@@ -359,10 +374,12 @@ char *string;
 	    else if(result>0){
 	       /*n=read(fd_serial_in,s,STRING_LENGTH-length);*/
 	       n=read(fd_serial_in,s,1);
+	       //printf("s: %s\n",s);
 	       s=s+n;
                length=length+n;
 	       *s=0;
-               if(verbose1){printf("%d: %s\n",n,s-n);fflush(stdout);}
+               /*if(verbose1){printf("read %d: %s\n",n,s-n);fflush(stdout);}*/
+               if(verbose1){printf("read %d of %d: %s\n",n,length,s);fflush(stdout);}
                if(length>=l1&&strstr(s-l1,done_reply)!=NULL){
 		 if(sync){
                    if(verbose1){fprintf(stderr,"read_serial: synced\n");fflush(stdout);}
@@ -381,7 +398,7 @@ char *string;
 	if(verbose){printf("read_serial: done reading serial\n");fflush(stdout);}
 	
 	/*tcdrain(fd_serial_in);*/
-
+#endif
 	return(n);
 }
 
@@ -391,13 +408,24 @@ char *string;
 write_serial(string)
 char *string;
 {
+#ifdef FAKE_CONTROLLER
+	   
+	if (verbose){
+	    fprintf(stdout,"fake_controller. skip writing command %s\n",string);fflush(stdout);
+	}
+
+#else
+	if (verbose){
+	    fprintf(stdout,"writing command %s\n",string);fflush(stdout);
+	}
+
 	if(write(fd_serial_out,string,strlen(string))!=strlen(string)){
 	     printf("fingmgr_serial: can't write to serial port\n");
 	     return(-1);
 	}
 	
 	tcdrain(fd_serial_out);
-	
+#endif
 	return(0);
 } 
 

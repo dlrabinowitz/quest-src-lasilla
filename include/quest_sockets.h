@@ -32,7 +32,7 @@
 #include <stdio.h>
 
 #define MAXBUFSIZE 1024
-#define TCS_STATUS_SRV_HOST "quest17_local"
+#define TCS_STATUS_SRV_HOST "pco-nuc"
 #define TCS_STATUS_SRV_PORT 3913
 #define TCS_STATUS_SRV_TIMEOUT_SEC 10
    

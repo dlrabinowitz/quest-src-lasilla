@@ -44,8 +44,8 @@
 #include <sys/types.h>
 #include <sys/time.h>
 //#include <strstream.h>
-#include <fstream.h>
-#include <iomanip.h>
+//#include <fstream.h>
+//#include <iomanip.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <syslog.h>
@@ -60,7 +60,7 @@
 #include <riset.h>
 #include <questctl.h>
 #include <almanac.h>
-#include <iostream.h>
+#include <iostream>
 //#include <tm_angles.h>
 
 //#define POLLING_DELAY_USEC 5000000 // delay 5 seconds between polling for sockets command
@@ -80,7 +80,7 @@
 #define RESPONSE_FILE "questctl.response"
 #define FAKE_PID_FILE "fake_questctl.pid"
 #define FAKE_RESPONSE_FILE "fake_questctl.response"
-#define FAKE_STATUS_FILE "/home/observer/quest-src-lasilla/fake_tcs.status"
+#define FAKE_STATUS_FILE "/home/observer/fake_tcs.status"
 #define QUESTPORT 3911
 #define STATUS_CHECK_INTERVAL 10.0 /*seconds between telescope status checks*/
 #define COMMAND_LENGTH NEAT_LINELEN
@@ -238,6 +238,8 @@ telescope_controller *telescope;
 site site_info;
 int command_code=NO_COMMAND_CODE;  // command code is one of the STOP CODEs defined above
 long int command_time = 0; // time stamp of last read command in command file
+
+using namespace std;
 
 int main(int argc, char *argv[])
 {

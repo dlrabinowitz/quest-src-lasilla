@@ -6,7 +6,7 @@
  * Very simple idea, get the current focus offset and return it.
  **************************************************************************/
 
-#include <iostream.h>
+#include <iostream>
 #include <stdlib.h>
 #include <telescope_controller.h>
 #define COM_PORT 1 /* com_port TCS uses to take remote commands */
@@ -15,6 +15,8 @@
 
 // Usage print out if you don't put in a focus offset at the command line
 void usage(char *);
+
+using namespace std;
 
 int main(int argc, char *argv[]) {
 	double offset;

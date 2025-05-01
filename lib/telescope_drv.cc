@@ -23,14 +23,14 @@
 #include <termios.h>
 #include <syslog.h>
 #include <string.h>
-#include <iostream.h>
+#include <iostream>
 #define VERBOSE 0
 
 #include <telescope_drv.h>
 #include <quest_sockets.h>
 int tel_drv_debug = 0;
 
-
+using namespace std;
 /*
  * Send a command to the TCS and return with the telemetry stream. Uses a system call
  * to the TCS_PROGRAM to send the command. The TCS_PROGRAM packgages the command and

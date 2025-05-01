@@ -36,11 +36,12 @@
  * 7/22/95
  */
 
-#include <iostream.h>
+#include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/time.h>
 #include <unistd.h>
+#include <string.h>
 #include <strings.h>
 
 #include <tm_angles.h>
@@ -67,6 +68,7 @@ polgdec_enc	FAKEMOUNT_pde_curr;
 // debugging vars for tcu interface and tcu object program
 EXTERN int tel_drv_debug;
 EXTERN int tel_ctlr_debug;
+using namespace std;
 
 // Constructor
 telmount::telmount() {

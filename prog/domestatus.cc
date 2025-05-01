@@ -11,6 +11,8 @@
 #include <stdio.h>
 #include <syslog.h>
 #include <telescope_controller.h>
+#include <unistd.h>
+
 #define COM_PORT 1 /* com port used by TCS for external io */
 #define POINT_TIMEOUT 300 /* timeout in seconds for pointing the telescope */
 

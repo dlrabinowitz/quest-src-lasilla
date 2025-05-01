@@ -11,7 +11,7 @@
  * far.
  **************************************************************************/
 
-#include <iostream.h>
+#include <iostream>
 #include <stdlib.h>
 #include <unistd.h>
 #include <telescope_controller.h>
@@ -20,6 +20,8 @@
 
 // Usage print out if you don't put in a focus setting at the command line
 void usage(char *);
+
+using namespace std;
 
 int main(int argc, char *argv[]) {
     double f_mm; 
