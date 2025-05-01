@@ -1,0 +1,8 @@
+00 07 * * * /group/astro/prj/daver/quest.dir/code.dir/status_srv/start_get_page.csh
+00 09 * * * /group/astro/prj/daver/quest.dir/code.dir/status_srv/get_log.csh
+#
+# Copy Regis fields to guest_target area so that they can be accessed faily
+# over the web from quest16 at La Silla
+#
+00 17 * * * cp -r /group/astro/prj/regis/ObsLogs/* /group/astro/prj/web/sedna/guest_targets; chmod -R 777 /group/astro/prj/web/sedna/guest_targets
+#

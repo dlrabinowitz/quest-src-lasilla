@@ -1,0 +1,11 @@
+status_srv
+
+status_srv.pl : A perl server that takes text information over a socket
+ and writes it to a web page. Normally runs on blade16. The webpage 
+location is  declared in status_srv.cfg
+
+
+status_client.pl :  A perl script that takes standard input and sends it to the status_srv using a socket. Normally runs on quest16
+
+status_srv.cfg  :  configuration file read by both of the above programs
+
