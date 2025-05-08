@@ -1,0 +1,19 @@
+#!/bin/tcsh
+#
+# start_tcs_talk_srv
+#
+# start up the tcs_talk_srv.pl which gives status info to quest_control
+# webpage
+#
+# kill any running version
+set l = `ps -aef | grep tcs_talk_srv | grep -ve "grep" | grep -ve "start"`
+if  ( $#l > 0 ) then
+   kill -9 $l[2]
+endif
+cd /home/observer/logs
+set d = `date +"%Y%m%d%H%M%S"`
+set log =  tcs_talk_srv.log
+date >! $log
+echo `date` "starting tcs_talk_srv.pl" >> $log
+~/bin/tcs_talk_srv.pl >>& $log &
+
