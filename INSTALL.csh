@@ -11,7 +11,8 @@ make clean
 make all
 make install
 cd ../util
-# the perl files are probably obsolete
-cp * /home/observer/bin
-
+cp *csh /home/observer/bin
+# these perl files are probably obsolete
+cp *pl /home/observer/bin
+#
 

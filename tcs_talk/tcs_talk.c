@@ -9,6 +9,8 @@
 #include "telescope_drv.h"
 #include "errno.h"
 
+#define FAKE_CONTROLLER
+
 /* IO permissions when opening the serial port for reading and writing */
 #define READ_OPS O_RDONLY
 #define WRITE_OPS O_WRONLY
@@ -185,7 +187,7 @@ char *serial_port;
 {
 
 #ifdef FAKE_CONTROLLER
-   printf("init_serial_input: simulating serial IO\n");
+   if (verbose) printf("init_serial_input: simulating serial IO\n");
 #else
 	fd_serial_in = open(serial_port,READ_OPS);
 	if (fd_serial_in < 0) {
@@ -209,7 +211,7 @@ init_serial_output(serial_port)
 char *serial_port;
 {
 #ifdef FAKE_CONTROLLER
-   printf("init_serial_output: simulating serial IO\n");
+   if(verbose)printf("init_serial_output: simulating serial IO\n");
 #else
 	fd_serial_out = open(serial_port,WRITE_OPS);
 	if (fd_serial_out < 0) {
@@ -322,13 +324,13 @@ char *string;
 
         
 #ifdef FAKE_CONTROLLER
-        sprintf(string,"%s","0  155651.21 +505906.5  +00:00:12 15:57:20  10.0   -0.0  5.74 E          HD2000.000 2455146.2 1 -246620  +0.7 17:20:18.9 0                         ");
+        strcpy(string,"0  155651.21 +505906.5  +00:00:12 15:57:20  10.0   -0.0  5.74            HD2000.000 2455146.2 1 -246620  +0.7 17:20:18.9 0 ");
 
 	n=strlen(string);
 	for (i=n;i<sizeof(TCS_Telemetry);i++){
-	   string[i]="";
+	   sprintf(string+i," ");
 	}
-	strcpy(string+i-1,"\n");
+	sprintf(string+i-1,"\n");
 	n=strlen(string);
 #else
 	/* set  timeout value for polling port for data */
