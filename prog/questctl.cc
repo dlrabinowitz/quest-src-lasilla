@@ -186,7 +186,11 @@
 
 #define SIGTERM 15 /*kill*/
 
-
+#define RA_FORMAT "%02d%02d%05.2f"
+#define DEC_FORMAT "%1s%02d%02d%05.2f"
+#define HA_FORMAT "%1s%02d:%02d:%02d"
+#define LST_FORMAT "%02d:%02d:%02d"
+#define UT_FORMAT "%02d:%02d:%04.1f"
 
 /* define to make sun always down at startup */
 //#define FAKE_SUNDOWN
@@ -232,6 +236,9 @@ int fake_interp(char *command, char *reply);
 int record_pid();
 int record_response(char *string);
 int record_fake_status (int dome_state);
+int make_fake_status (int dome_state, TCS_Telemetry *t);
+int hr_to_string(double hr, char *string, char *format);
+int deg_to_string(double deg, char *string, char *format);
 
 telmount *t;
 telescope_controller *telescope;
@@ -1855,19 +1862,129 @@ int record_fake_status (int dome_state)
 {
    FILE *output;
    struct timeval t;
-   
+  
    output=fopen(FAKE_STATUS_FILE,"w");
    if(output==NULL){
       fprintf(stderr,"record_fake_status: could not open file %s for writing\n",FAKE_STATUS_FILE);
       return(-1);
    }
    gettimeofday(&t,NULL);
-   fprintf(output,
-	"0  105039.45 +405920.4  +00:00:11 10:51:24  20.0   -0.0  2.92 e          HD2000.000 2455059.2 1 -249330  -0.2 17:57:17.2 %d\n"
-	,dome_state);
+   TCS_Telemetry tel;
+   make_fake_status(dome_state,&tel);
+   fprintf(output,"%s",(char *)&tel);
    fclose(output);
 
    return(0);
 }
 /*********************************************/
+
+int make_fake_status (int dome_state, TCS_Telemetry *t)
+{
+   for (int i=0;i<sizeof(TCS_Telemetry);i++){
+      strcpy(((char *)t)+i," ");
+   }
+   sprintf(t->motion_status,"%1d",my_fake_status);
+   strcpy(t->wobble_status," ");
+   strcpy(t->dummy1," ");
+   hr_to_string(my_fake_ra,t->ra,RA_FORMAT);
+   strcpy(t->dummy2," ");
+   deg_to_string(my_fake_dec,t->dec,DEC_FORMAT);
+   strcpy(t->dummy3,"  ");
+   hr_to_string(my_fake_ha,t->ha,HA_FORMAT);
+   strcpy(t->dummy4," ");
+   float my_fake_lst = my_fake_ra + my_fake_ha;
+   hr_to_string(my_fake_lst,t->lst,LST_FORMAT);
+   strcpy(t->dummy5," ");
+   strcpy(t->alt,"+90.0");
+   strcpy(t->dummy6," ");
+   strcpy(t->azim,"+000.0");
+   strcpy(t->dummy7," ");
+   strcpy(t->secz,"01.00");
+   strcpy(t->dummy8," ");
+   strcpy(t->com1,"E"); /* alternates E,e for each command successfully executed */
+   strcpy(t->com2," "); 
+   strcpy(t->com3," "); 
+   strcpy(t->com4," "); 
+   strcpy(t->com5," "); 
+   strcpy(t->com6," "); 
+   strcpy(t->com7," "); 
+   strcpy(t->com8," "); 
+   strcpy(t->dummy9," ");
+   strcpy(t->ra_limit," "); /*1 when in limit */
+   strcpy(t->dec_limit," "); /*1 when in limit */
+   strcpy(t->horiz_limit," ");/* 1 when in limit */
+   strcpy(t->drive_status,"1"); /* 1 when enabled, blank otherwise */
+   strcpy(t->epoch,"2000.000");
+   strcpy(t->dummy10," ");
+   strcpy(t->jd,"2450000.00");
+#ifdef DEMO_TCS
+   strcpy(t->reserved,"     ");
+#else
+   strcpy(t->dummy11," ");
+   strcpy(t->channel,"1");
+   strcpy(t->dummy12," ");
+   sprintf(t->focus_pos,"%+05d",my_fake_focus);
+   strcpy(t->dummy13," ");
+   strcpy(t->dome_err_deg,"+000.0");
+   strcpy(t->dummy14," ");
+   hr_to_string(my_fake_ut,t->ut_time,UT_FORMAT); 
+   strcpy(t->dummy," ");
+   sprintf(t->dome_state,"%1d",dome_state);
+   strcpy(t->reserved,"                          ");
+#endif
+   sprintf(t->cr,"\r");
+   sprintf(t->lf,"\n");
+   return (0);
+}
+
+int hr_to_string(double hr, char *string, char *format)
+{
+   double hr_s;
+   int hr_h,hr_m;
+   int sign;
+   if (hr < 0 ){
+      hr = -hr;
+      sign = -1;
+   }
+   else{
+      sign = 1;
+   }
+   hr_h = hr;
+   hr_m = (hr - hr_h)*60.0;
+   hr_s = (hr - hr_h - (hr_m/60.0))*3600.0;
+   if(strstr(format,"%1s")== NULL)
+        sprintf(string,format,hr_h,hr_m,hr_s);
+   else if (sign<0)
+        sprintf(string,format,"-",hr_h,hr_m,hr_s);
+   else
+      sprintf(string,format,"+",hr_h,hr_m,hr_s);
+    
+   return (0);
+}
+
+int deg_to_string(double deg, char *string, char *format)
+{
+   double deg_s;
+   int deg_d,deg_m;
+   int sign;
+   if (deg < 0 ){
+      deg = -deg;
+      sign = -1;
+   }
+   else{
+      sign = 1;
+   }
+   deg_d = deg;
+   deg_m = (deg - deg_d)*60.0;
+   deg_s = (deg - deg_d - (deg_m/60.0))*3600.0;
+   if(strstr(format,"%1s")== NULL)
+       sprintf(string,format,deg_d,deg_m,deg_s);
+   else if (sign<0)
+       sprintf(string,format,"-",deg_d,deg_m,deg_s);
+   else
+       sprintf(string,format,"+",deg_d,deg_m,deg_s);
+
+   return (0);
+}
+
 

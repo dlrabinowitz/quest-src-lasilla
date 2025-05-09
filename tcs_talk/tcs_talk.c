@@ -324,13 +324,63 @@ char *string;
 
         
 #ifdef FAKE_CONTROLLER
-        strcpy(string,"0  155651.21 +505906.5  +00:00:12 15:57:20  10.0   -0.0  5.74            HD2000.000 2455146.2 1 -246620  +0.7 17:20:18.9 0 ");
-
-	n=strlen(string);
-	for (i=n;i<sizeof(TCS_Telemetry);i++){
-	   sprintf(string+i," ");
+        TCS_Telemetry *t;
+	t=(TCS_Telemetry *)malloc(sizeof(TCS_Telemetry));
+	for (i=0;i<sizeof(TCS_Telemetry);i++){
+	   strcpy((char *)(t+i)," ");
 	}
-	sprintf(string+i-1,"\n");
+	strcpy(t->motion_status,"1");
+	strcpy(t->wobble_status," ");
+	strcpy(t->dummy1," ");
+	strcpy(t->ra,"000000.00");
+	strcpy(t->dummy2," ");
+	strcpy(t->dec,"+320000.00");
+	strcpy(t->dummy3,"  ");
+	strcpy(t->ha,"+00:00:00");
+	strcpy(t->dummy4," ");
+	strcpy(t->lst,"00:00:00");
+	strcpy(t->dummy5," ");
+	strcpy(t->alt,"+90.0");
+	strcpy(t->dummy6," ");
+	strcpy(t->azim,"+000.0");
+	strcpy(t->dummy7," ");
+	strcpy(t->secz,"01.00");
+	strcpy(t->dummy8," ");
+	strcpy(t->com1,"E"); /* alternates E,e for each command successfully executed */
+	strcpy(t->com2," "); 
+	strcpy(t->com3," "); 
+	strcpy(t->com4," "); 
+	strcpy(t->com5," "); 
+	strcpy(t->com6," "); 
+	strcpy(t->com7," "); 
+	strcpy(t->com8," "); 
+	strcpy(t->dummy9," ");
+	strcpy(t->ra_limit," "); /*1 when in limit */
+	strcpy(t->dec_limit," "); /*1 when in limit */
+	strcpy(t->horiz_limit," ");/* 1 when in limit */
+	strcpy(t->drive_status," "); /* 1 when enabled, blank otherwise */
+	strcpy(t->epoch,"2000.000");
+	strcpy(t->dummy10," ");
+	strcpy(t->jd,"2450000.00");
+#ifdef DEMO_TCS
+	strcpy(t->reserved,"     ");
+#else
+	strcpy(t->dummy11," ");
+	strcpy(t->channel,"1");
+	strcpy(t->dummy12," ");
+	strcpy(t->focus_pos,"+00000");
+	strcpy(t->dummy13," ");
+	strcpy(t->dome_err_deg,"+000.0");
+	strcpy(t->dummy14," ");
+	strcpy(t->ut_time,"00:00:00.0");
+	strcpy(t->dummy," ");
+	strcpy(t->dome_state,"0"); /*0 for closed, 1 for open */
+	strcpy(t->reserved,"                          ");
+#endif
+	sprintf(t->cr,"\r");
+	sprintf(t->lf,"\n");
+        strncpy(string,(char *)t,sizeof(TCS_Telemetry));
+
 	n=strlen(string);
 #else
 	/* set  timeout value for polling port for data */
