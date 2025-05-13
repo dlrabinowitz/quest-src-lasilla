@@ -205,6 +205,7 @@ double my_fake_ut=0.0;
 double my_fake_stop_time=0.0;
 int my_fake_status=0; /* not tracking */
 int my_fake_dome_status=DOME_OPEN_STATUS;
+char fake_com1_status[1];
 
 
 int verbose=1;
@@ -261,8 +262,6 @@ int main(int argc, char *argv[])
     double lst; 
 //    double current_ra, current_dec;
 
-    
-   
     if(install_signal_handlers()!=0){
         fprintf(stderr,"questctl: could not install signal handlers. Exitting\n");
         fflush(stderr);
@@ -313,6 +312,7 @@ int main(int argc, char *argv[])
         my_fake_ra=lst-my_fake_ha;
         my_fake_stop_time=neat_gettime_utc();
         my_fake_status=TRACKING_OFF_STATE;
+        strcpy(fake_com1_status,"E");   
         record_fake_status(my_fake_dome_status);
         
     }
@@ -597,6 +597,8 @@ int main(int argc, char *argv[])
           if(verbose){
              fprintf(stderr,"%s: reading command %ld\n",argv[0],t2.tv_sec);
           }
+	  for (int i=0;i< COMMAND_LENGTH;i++){*(command+i)=0;}
+
           if ((count=read(socfd,(u_char *)command,COMMAND_LENGTH)) == -1) {
 	     fprintf(stderr,"%s: socket read error %ld\n",argv[0],t2.tv_sec);
 	     close(socfd);
@@ -1901,7 +1903,11 @@ int make_fake_status (int dome_state, TCS_Telemetry *t)
    strcpy(t->dummy7," ");
    strcpy(t->secz,"01.00");
    strcpy(t->dummy8," ");
-   strcpy(t->com1,"E"); /* alternates E,e for each command successfully executed */
+   if (strcmp(fake_com1_status,"E")==0)
+	  strcpy(fake_com1_status,"e");
+   else if (strcmp(fake_com1_status,"e")==0)
+	  strcpy(fake_com1_status,"E");
+   strcpy(t->com1,fake_com1_status); /* alternates E,e for each command successfully executed */
    strcpy(t->com2," "); 
    strcpy(t->com3," "); 
    strcpy(t->com4," "); 

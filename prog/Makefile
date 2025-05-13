@@ -15,18 +15,20 @@ SHELLS  = update_filter_log start_quest
 QUESTPROGRAMS = questctl sunup weather getfocus setfocus \
 	mountctl opendome_raw closedome slavedome domestatus \
 	slavewindscr getfilter disable_telescope enable_telescope \
-	telescope_status stow_telescope get_riset start_questctl
+	telescope_status stow_telescope get_riset 
+
+QUESTSCRIPT = start_questctl
 
 INSTALLDIR = /home/observer/bin
 #INSTALLDIR = /Users/daver/yale/lasilla/quest-src-lasilla/bin
 
-all: $(QUESTPROGRAMS)
+all: $(QUESTPROGRAMS) $(QUESTSCRIPTS)
 
 quest: $(QUESTPROGRAMS)
 
 copy:
 	(cd $(INSTALLDIR); rm -f $(QUESTPROGRAMS))
-	cp -p $(QUESTPROGRAMS) $(INSTALLDIR)
+	cp -p $(QUESTPROGRAMS) $(QUESTSCRIPTS) $(INSTALLDIR)
 
 install: all copy
 

@@ -54,12 +54,25 @@ int send_socket_command(char *command, char *reply, char *machine, int port, int
             fflush(stderr);
   }
 
-  if (write_socket_data(s, (char *)command, strlen(command)+1)
+  //DEBUG
+
+  char *buf;
+  buf = (char *)malloc((strlen(command)+1)*sizeof(char));
+  strcpy(buf,command);
+  sprintf(buf+strlen(command),"\n");
+
+  //if (write_socket_data(s, (char *)command, strlen(command))
+  //        != strlen(command)) {
+  if (write_socket_data(s, (char *)buf, strlen(command)+1)
             != strlen(command)+1) {
+  //if (write_socket_data(s, (char *)command, strlen(command)+1)
+  //        != strlen(command)+1) {
           fprintf(stderr,"send_socket_command: can't write data to socket\n");
           return(-1);
   }
- 
+
+  free(buf);
+
   if(VERBOSE1){
   	  ut=neat_gettime_utc();
           fprintf(stderr,"send_socket_command: %9.6lf reading reply \n",ut);
