@@ -35,6 +35,7 @@ LST_SUNRISE  0.129811
 LST_MOONRISE 11.559936
 LST_MOONSET 21.979086
 
+
 "EVENING" and "MORNING" refer to the time when the sun is at elevation
 TWILIGHT_ELEV, nominally -18 deg. Hence, LST_EVENING is the start of the 
 dark time, and LST_MORNING is the end of the dark time. Twilight is the 
@@ -384,6 +385,7 @@ LEGALITIES:
 #include <stdarg.h>
 #include <string.h>
 #include <questctl.h>
+#define FAKE_TELESCOPE
 
 #define TWILIGHT_ELEV -12.0 /* deg below horizon of sun for end of twilight */
 
@@ -1078,8 +1080,7 @@ void load_site(longit,lat,stdz,use_dst,
 	char obs_code[3];  /* need only one char, but why not? */
 	char errprompt[50];
 
-        /* if site_name is preset to "DEFAULT", then use Palomar
-           (obs_code="p") as the site */
+        /* if site_name is preset to "DEFAULT", then use DEFAULT_OBSCODEfor the site obs_code */
 
         if(strstr(site_name,"DEFAULT")!=NULL){
           obs_code[0]=DEFAULT_OBSCODE;
@@ -1168,12 +1169,23 @@ void load_site(longit,lat,stdz,use_dst,
 		strcpy(zone_name, "Chilean");
 		*zabr = 'C';
 		*use_dst = -1;
+#ifdef FAKE_TELESCOPE
+                strcpy(site_name, "Fake Site");
+                strcpy(zone_name, "Fake Location");
+                *zabr = 'F';
+                *longit = 0.0;
+#else
 		*longit = 4.7153;
+#endif
 		*lat = -29.257;
 		*stdz = 4.;
 		*elevsea = 2347.;
 		*elev = 2347.; /* for ocean horizon, not Andes! */
+#ifdef FAKE_TELESCOPE
 		printf("\n\n** Will use daylght time, Chilean date conventions. \n\n");
+#else
+		printf("\n\n** Will use daylght time, Fake Site conventions. \n\n");
+#endif
 	}
 	else if (obs_code[0] == 'b') {
 		strcpy(site_name, "Black Moshannon Observatory");
@@ -6362,8 +6374,10 @@ int get_almanac(Almanac *almanac)
 
         strcpy(site_name,"DEFAULT");
 
+	printf("#load_site: site_name is %s\n",site_name);
 	load_site(&longit,&lat,&stdz,&use_dst,zone_name,&zabr,
 			&elevsea,&elev,&horiz,site_name);
+	printf("#load_site: site_name is %s\n",site_name);
 
 #if SYS_CLOCK_OK == 1
 
@@ -6395,6 +6409,7 @@ int get_almanac(Almanac *almanac)
 	  oprntf("\n#\n");
 #endif
 
+	fprintf(stdout,"print_tonight: site_name = %s\n",site_name);
 
 	print_tonight(date,lat,longit,elevsea,elev,horiz,site_name,stdz,
 			   zone_name,zabr,use_dst,&jdb,&jde,2,almanac);

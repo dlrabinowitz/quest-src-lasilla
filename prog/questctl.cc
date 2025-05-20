@@ -304,6 +304,10 @@ int main(int argc, char *argv[])
        exit(-1);
     }
  
+    struct  tm  tm;
+    fprintf(stderr,"ut_offset is %12.6f\n", UT_OFFSET);
+    fprintf(stderr,"current ut is %12.6f\n", get_date_time(&tm));
+	     
     if(fake_mount){
 	fprintf(stderr,"%s: telescope operation will be simulated\n",argv[0]);
         fflush(stderr);

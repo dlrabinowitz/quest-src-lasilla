@@ -31,14 +31,77 @@
  * Read system clock, return seconds tm structure with month, day, year,
  * hour, minute, and second UT
  */
-void
+double
 get_date_time(struct tm *tm)
 {
     struct timeval tv;
+    double ut;
 
     (void) gettimeofday(&tv,NULL);
     *tm = *gmtime(&(tv.tv_sec));
-    return;
+    ut = tm->tm_hour + tm->tm_min/60. + tm->tm_sec/3600.;
+
+    if(UT_OFFSET!=0.0){
+
+       ut=ut+UT_OFFSET;
+       if(ut>24.0){
+	   ut=ut-24.0;
+	   advance_tm_day(tm);
+       }   
+       tm->tm_hour=ut;
+       tm->tm_min=(ut-tm->tm_hour)*60.0;
+       tm->tm_sec=(ut - tm->tm_hour - (tm->tm_min/60.0) )*3600.0;
+    }
+
+    return (ut);
+}
+
+int advance_tm_day(struct tm *tm)
+{
+    tm->tm_mday=tm->tm_mday+1;
+
+    if(tm->tm_mday==29 && tm->tm_mon==2 && !leap_year_check(tm->tm_year)){
+       tm->tm_mon=3;
+       tm->tm_mday=1;
+    }
+    else if(tm->tm_mday==30 && tm->tm_mon==2 ){
+       tm->tm_mon=3;
+       tm->tm_mday=1;
+    }
+    else if (tm->tm_mday==31 && (tm->tm_mon == 4 ||
+        tm->tm_mon ==6 || tm->tm_mon == 9 || tm->tm_mon==11 ) ) {
+        tm->tm_mon=tm->tm_mon+1;
+        tm->tm_mday=1;
+    }
+    else if (tm->tm_mday==32) {
+        tm->tm_mon=tm->tm_mon+1;
+        tm->tm_mday=1;
+        if(tm->tm_mon==13){
+          tm->tm_mon=1;
+          tm->tm_year=tm->tm_year+1;
+        }
+    }
+    return(0);
+}
+
+int leap_year_check(int year)
+{
+   int n;
+
+   n=year/4;
+   n=4*n;
+   if ( n != year ) return(0);
+
+   n = year/100;
+   n = n * 100;
+   if ( n != year ) return(1);
+
+   n =  year/400;
+   n = n*400;
+
+   if( n == year) return(1);
+
+   return(0);
 }
 
 /* neat_gettime_utc
@@ -54,6 +117,10 @@ neat_gettime_utc()
     (void) gettimeofday(&tv,NULL);
     t = tv.tv_sec + (tv.tv_usec/1000000.0);
     return t;
+
+    if (UT_OFFSET != 0){
+	t = t + UT_OFFSET * 3600.0;
+    }
 }
 
 /* uxt_mjd
