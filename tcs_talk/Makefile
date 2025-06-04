@@ -27,4 +27,4 @@ tcs_talk: $(TCS_TALK_OBJECTS)
 	$(CC) $(CFLAGS) -c $<
 
 clean:
-	rm -f  *~ *.o $(PROGRAMS)
+	rm $(OBJECTS) $(PROGRAMS)
