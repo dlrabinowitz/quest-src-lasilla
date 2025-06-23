@@ -1323,7 +1323,7 @@ int fake_interp(char *command, char *reply)
        sprintf(reply,"%s %9.6f %9.6f %9.6f",COMMAND_DONE_REPLY,my_fake_ra,my_fake_dec,neat_gettime_utc());
     }
     else if(strstr(command,TELESCOPE_STATUS_COMMAND)!=NULL){
-       cerr << "fake posrd command" << endl;
+       cerr << "fake telescope_status command" << endl;
        getlst(&lst);
        my_fake_ra=lst-my_fake_ha;
        sprintf(reply,"%s %s",COMMAND_DONE_REPLY,"FAKE MODE : NO STATUS AVAILABLE");
